@@ -117,17 +117,17 @@ namespace ACData
                 Process(file, searchPattern, callback);
         }
 
-        public static bool Convert(FileInfo fi)
+        public static bool Convert(FileInfo fi, DirectoryInfo outputFolder = null)
         {
             if (fi.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
-                return json2sql(fi);
+                return json2sql(fi, outputFolder);
             else if (fi.Name.EndsWith(".sql", StringComparison.OrdinalIgnoreCase))
-                return sql2json(fi);
+                return sql2json(fi, outputFolder);
             else
                 return false;
         }
 
-        public static bool sql2json(FileInfo fi)
+        public static bool sql2json(FileInfo fi, DirectoryInfo outputFolder = null)
         {
             var lines = File.ReadAllLines(fi.FullName);
 
@@ -146,7 +146,10 @@ namespace ACData
                 json = JsonConvert.SerializeObject(json_weenie, LifestonedConverter.SerializerSettings);
             }
 
-            var jsonFilename = fi.FullName.Replace(".sql", ".json");
+            var jsonFolder = outputFolder ?? fi.Directory;
+
+            var jsonFilename = jsonFolder.FullName + Path.DirectorySeparatorChar + fi.Name.Replace(".sql", ".json");
+
             File.WriteAllText(jsonFilename, json);
 
             Console.WriteLine($"Converted {fi.FullName} to {jsonFilename}");
@@ -156,7 +159,7 @@ namespace ACData
 
         public static WeenieSQLWriter Converter;
         
-        public static bool json2sql(FileInfo fi)
+        public static bool json2sql(FileInfo fi, DirectoryInfo outputFolder = null)
         {
             if (Converter == null)
             {
@@ -188,14 +191,17 @@ namespace ACData
                     output.LastModified = DateTime.UtcNow;
 
                 var sqlFilename = Converter.GetDefaultFileName(output);
-                var sqlFile = new StreamWriter(fi.DirectoryName + Path.DirectorySeparatorChar + sqlFilename);
+
+                var sqlFolder = outputFolder ?? fi.Directory;
+
+                var sqlFile = new StreamWriter(sqlFolder.FullName + Path.DirectorySeparatorChar + sqlFilename);
 
                 Converter.CreateSQLDELETEStatement(output, sqlFile);
                 sqlFile.WriteLine();
 
                 Converter.CreateSQLINSERTStatement(output, sqlFile);
 
-                var metadata = new ACE.Adapter.GDLE.Models.Metadata(weenie);
+                var metadata = new Metadata(weenie);
                 if (metadata.HasInfo)
                 {
                     var jsonEx = JsonConvert.SerializeObject(metadata, Formatting.Indented);
