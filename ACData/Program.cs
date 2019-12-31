@@ -6,18 +6,21 @@ using ACE.Adapter.GDLE.Models;
 using ACE.Adapter.Lifestoned;
 
 using ACE.Database.SQLFormatters;
-
+using System.Windows.Forms;
 using Newtonsoft.Json;
 
 namespace ACData
 {
     public class Program
     {
+        [STAThread]
         public static void Main(string[] args)
         {
             if (args.Length == 0)
             {
-                Usage();
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new UxMain());
                 return;
             }
 
