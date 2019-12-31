@@ -43,14 +43,15 @@
             // 
             this.ListBoxSourceFiles.AllowDrop = true;
             this.ListBoxSourceFiles.BackColor = System.Drawing.Color.Gray;
+            this.ListBoxSourceFiles.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ListBoxSourceFiles.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ListBoxSourceFiles.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.ListBoxSourceFiles.ForeColor = System.Drawing.Color.White;
             this.ListBoxSourceFiles.FormattingEnabled = true;
             this.ListBoxSourceFiles.ItemHeight = 15;
-            this.ListBoxSourceFiles.Location = new System.Drawing.Point(10, 61);
+            this.ListBoxSourceFiles.Location = new System.Drawing.Point(10, 78);
             this.ListBoxSourceFiles.Name = "ListBoxSourceFiles";
             this.ListBoxSourceFiles.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-            this.ListBoxSourceFiles.Size = new System.Drawing.Size(779, 454);
+            this.ListBoxSourceFiles.Size = new System.Drawing.Size(779, 437);
             this.ListBoxSourceFiles.TabIndex = 1;
             this.ListBoxSourceFiles.Click += new System.EventHandler(this.ListBoxSourceFiles_Click);
             // 
@@ -67,7 +68,8 @@
             // 
             // TextBoxDestinationPath
             // 
-            this.TextBoxDestinationPath.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.TextBoxDestinationPath.BackColor = System.Drawing.Color.Gray;
+            this.TextBoxDestinationPath.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.TextBoxDestinationPath.Font = new System.Drawing.Font("Calibri", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TextBoxDestinationPath.ForeColor = System.Drawing.Color.White;
             this.TextBoxDestinationPath.Location = new System.Drawing.Point(110, 529);
@@ -104,24 +106,25 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.ForeColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(12, 45);
+            this.label4.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
+            this.label4.Location = new System.Drawing.Point(12, 57);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(179, 15);
+            this.label4.Size = new System.Drawing.Size(196, 18);
             this.label4.TabIndex = 19;
             this.label4.Text = "Click box or drag and drop files";
             // 
             // label6
             // 
             this.label6.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label6.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.Color.White;
-            this.label6.Location = new System.Drawing.Point(15, 13);
+            this.label6.Location = new System.Drawing.Point(15, 8);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(748, 32);
+            this.label6.Size = new System.Drawing.Size(748, 49);
             this.label6.TabIndex = 22;
-            this.label6.Text = "This is a tool for converting Asheron\'s Call server data formats.\r\n\r\n";
+            this.label6.Text = "This is a tool for converting Asheron\'s Call server data formats.\r\n JSON -> SQL o" +
+    "r SQL -> JSON\r\n\r\n\r\n";
             this.label6.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // ButtonClearFiles
@@ -164,8 +167,8 @@
         private System.Windows.Forms.TextBox TextBoxDestinationPath;
         private System.Windows.Forms.Button ButtonDestination;
         private System.Windows.Forms.Button ButtonProcess;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button ButtonClearFiles;
+        protected System.Windows.Forms.Label label4;
     }
 }

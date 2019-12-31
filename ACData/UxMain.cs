@@ -110,7 +110,10 @@ namespace ACData
                 foreach (string filename in ListBoxSourceFiles.Items)
                 {
                     i++;
-                    Program.Process(filename, new List<string>() { "*.json", "*.sql" }, (fi) => Program.Convert(fi));
+                    DirectoryInfo destinationPath = new DirectoryInfo(TextBoxDestinationPath.Text);
+                    FileInfo sourceFile = new FileInfo(filename);
+                    Program.Convert(sourceFile, destinationPath);
+                    // Program.Process(filename, new List<string>() { "*.json", "*.sql" }, (fi) => Program.Convert(fi));
                     // Dest path is from TextBoxDestinationPath.Text
 
                 }
