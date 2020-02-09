@@ -55,6 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ACE.Adapter\Enum\WeenieClassID.cs" />
+    <Compile Include="ACE.Adapter\GDLE\GDLEConverter.cs" />
+    <Compile Include="ACE.Adapter\GDLE\GDLELoader.cs" />
     <Compile Include="ACE.Adapter\GDLE\Models\Angles.cs" />
     <Compile Include="ACE.Adapter\GDLE\Models\CreateOffset.cs" />
     <Compile Include="ACE.Adapter\GDLE\Models\DoubleRequirement.cs" />
@@ -64,7 +66,7 @@
     <Compile Include="ACE.Adapter\GDLE\Models\Landblock.cs" />
     <Compile Include="ACE.Adapter\GDLE\Models\LandblockLink.cs" />
     <Compile Include="ACE.Adapter\GDLE\Models\LandblockValue.cs" />
-    <Compile Include="ACE.Adapter\GDLE\Models\LandblockWeeny.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\LandblockWeenie.cs" />
     <Compile Include="ACE.Adapter\GDLE\Models\Metadata.cs" />
     <Compile Include="ACE.Adapter\GDLE\Models\MetaSpell.cs" />
     <Compile Include="ACE.Adapter\GDLE\Models\Mod.cs" />
@@ -162,6 +164,7 @@
     <Compile Include="ACE.Entity\Enum\WeenieHeaderFlags.cs" />
     <Compile Include="ACE.Entity\Enum\WeenieType.cs" />
     <Compile Include="ACE.Entity\Enum\WieldRequirement.cs" />
+    <Compile Include="ContentType.cs" />
     <Compile Include="IDToString\Reader.cs" />
     <Compile Include="Model\CookBook.cs" />
     <Compile Include="Model\Encounter.cs" />
@@ -219,11 +222,15 @@
     <Compile Include="Model\WeeniePropertiesTextureMap.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ACE.Adapter\SQLFormatters\SQLReader.cs" />
-    <Compile Include="ACE.Adapter\SQLFormatters\Table.cs" />
+    <Compile Include="SQL\JsonReader.cs" />
+    <Compile Include="SQL\LandblockSQLReader.cs" />
+    <Compile Include="SQL\SQLReader.cs" />
+    <Compile Include="SQL\WeenieSQLReader.cs" />
+    <Compile Include="SQL\Table.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Compile Include="ACE.Adapter\SQLFormatters\LandblockSQLWriter.cs" />
     <Content Include="IDToString\SpellName.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

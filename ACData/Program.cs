@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 
+using ACE.Adapter.GDLE;
 using ACE.Adapter.GDLE.Models;
 using ACE.Adapter.Lifestoned;
 
@@ -126,11 +128,32 @@ namespace ACData
 
         public static bool sql2json(FileInfo fi, DirectoryInfo outputFolder = null)
         {
+            var contentType = SQLReader.GetContentType(fi.FullName);
+
+            if (contentType == ContentType.Undefined)
+            {
+                Console.WriteLine($"Couldn't determine content type for {fi.FullName}");
+                return false;
+            }
+
+            switch (contentType)
+            {
+                case ContentType.Landblock:
+                    return sql2json_landblock(fi, outputFolder);
+                case ContentType.Weenie:
+                    return sql2json_weenie(fi, outputFolder);
+                default:
+                    return false;
+            }
+        }
+
+        public static bool sql2json_weenie(FileInfo fi, DirectoryInfo outputFolder = null)
+        {
             var lines = File.ReadAllLines(fi.FullName);
 
-            var sqlReader = new SQLReader();
-            var weenie = sqlReader.sql2weenie(lines);
-
+            var sqlReader = new WeenieSQLReader();
+            var weenie = sqlReader.ReadModel(lines);
+            
             if (!LifestonedConverter.TryConvertACEWeenieToLSDJSON(weenie, out var json, out var json_weenie))
             {
                 Console.WriteLine($"Failed to convert {fi.FullName} to json");
@@ -154,17 +177,65 @@ namespace ACData
             return true;
         }
 
-        public static WeenieSQLWriter Converter;
-        
+        public static bool sql2json_landblock(FileInfo fi, DirectoryInfo outputFolder = null)
+        {
+            var lines = File.ReadAllLines(fi.FullName);
+
+            var sqlReader = new LandblockSQLReader();
+
+            var landblockInstances = sqlReader.ReadModel(lines);
+
+            if (!GDLEConverter.TryConvert(landblockInstances, out var result))
+            {
+                Console.WriteLine($"Failed to convert {fi.FullName} to json");
+                return false;
+            }
+
+            var jsonFolder = outputFolder ?? fi.Directory;
+
+            var jsonFilename = jsonFolder.FullName + Path.DirectorySeparatorChar + fi.Name.Replace(".sql", ".json");
+
+            var json = JsonConvert.SerializeObject(result, LifestonedConverter.SerializerSettings);
+
+            File.WriteAllText(jsonFilename, json);
+
+            Console.WriteLine($"Converted {fi.FullName} to {jsonFilename}");
+
+            return true;
+        }
+
         public static bool json2sql(FileInfo fi, DirectoryInfo outputFolder = null)
         {
-            if (Converter == null)
+            var contentType = JsonReader.GetContentType(fi.FullName);
+
+            if (contentType == ContentType.Undefined)
             {
-                Converter = new WeenieSQLWriter();
-                Converter.WeenieNames = IDToString.Reader.GetIDToNames("WeenieName.txt");
-                Converter.SpellNames = IDToString.Reader.GetIDToNames("SpellName.txt");
-                Converter.TreasureDeath = IDToString.Reader.GetIDToTier("TreasureDeath.txt");
-                Converter.TreasureWielded = IDToString.Reader.GetIDToWieldList("TreasureWielded.txt");
+                Console.WriteLine($"Couldn't determine content type for {fi.FullName}");
+                return false;
+            }
+
+            switch (contentType)
+            {
+                case ContentType.Landblock:
+                    return json2sql_landblock(fi, outputFolder);
+                case ContentType.Weenie:
+                    return json2sql_weenie(fi, outputFolder);
+                default:
+                    return false;
+            }
+        }
+
+        public static WeenieSQLWriter WeenieSQLWriter;
+        
+        public static bool json2sql_weenie(FileInfo fi, DirectoryInfo outputFolder = null)
+        {
+            if (WeenieSQLWriter == null)
+            {
+                WeenieSQLWriter = new WeenieSQLWriter();
+                WeenieSQLWriter.WeenieNames = IDToString.Reader.GetIDToNames("WeenieName.txt");
+                WeenieSQLWriter.SpellNames = IDToString.Reader.GetIDToNames("SpellName.txt");
+                WeenieSQLWriter.TreasureDeath = IDToString.Reader.GetIDToTier("TreasureDeath.txt");
+                WeenieSQLWriter.TreasureWielded = IDToString.Reader.GetIDToWieldList("TreasureWielded.txt");
             }
 
             // read json into lsd weenie
@@ -187,16 +258,16 @@ namespace ACData
                 if (output.LastModified == DateTime.MinValue)
                     output.LastModified = DateTime.UtcNow;
 
-                var sqlFilename = Converter.GetDefaultFileName(output);
+                var sqlFilename = WeenieSQLWriter.GetDefaultFileName(output);
 
                 var sqlFolder = outputFolder ?? fi.Directory;
 
                 var sqlFile = new StreamWriter(sqlFolder.FullName + Path.DirectorySeparatorChar + sqlFilename);
 
-                Converter.CreateSQLDELETEStatement(output, sqlFile);
+                WeenieSQLWriter.CreateSQLDELETEStatement(output, sqlFile);
                 sqlFile.WriteLine();
 
-                Converter.CreateSQLINSERTStatement(output, sqlFile);
+                WeenieSQLWriter.CreateSQLINSERTStatement(output, sqlFile);
 
                 var metadata = new Metadata(weenie);
                 if (metadata.HasInfo)
@@ -204,6 +275,91 @@ namespace ACData
                     var jsonEx = JsonConvert.SerializeObject(metadata, Formatting.Indented);
                     sqlFile.WriteLine($"\n/* Lifestoned Changelog:\n{jsonEx}\n*/");
                 }
+
+                sqlFile.Close();
+
+                Console.WriteLine($"Converted {fi.FullName} to {fi.DirectoryName}{Path.DirectorySeparatorChar}{sqlFilename}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine($"Failed to convert {fi.FullName}");
+                return false;
+            }
+
+            return true;
+        }
+
+        public static LandblockSQLWriter LandblockSQLWriter;
+
+        public static bool json2sql_landblock(FileInfo fi, DirectoryInfo outputFolder = null)
+        {
+            // read json into gdle spawnmap
+            if (!GDLELoader.TryLoadLandblock(fi.FullName, out var result))
+            {
+                Console.WriteLine($"Failed to parse {fi.FullName}");
+                return false;
+            }
+
+            // convert to sql landblock instances
+            if (!GDLEConverter.TryConvert(result, out var landblockInstances, out var landblockInstanceLinks))
+            {
+                Console.WriteLine($"Failed to convert {fi.FullName}");
+                return false;
+            }
+
+            // link up instances
+            // TODO: move this to TryConvert
+            foreach (var link in landblockInstanceLinks)
+            {
+                var parent = landblockInstances.FirstOrDefault(i => i.Guid == link.ParentGuid);
+                if (parent == null)
+                {
+                    Console.WriteLine($"Couldn't find parent guid for {link.ParentGuid:X8}");
+                    continue;
+                }
+                parent.LandblockInstanceLink.Add(link);
+
+                var child = landblockInstances.FirstOrDefault(i => i.Guid == link.ChildGuid);
+                if (child == null)
+                {
+                    Console.WriteLine($"Couldn't find child guid for {link.ChildGuid:X8}");
+                    continue;
+                }
+                child.IsLinkChild = true;
+            }
+
+            // output to sql
+            try
+            {
+                if (LandblockSQLWriter == null)
+                {
+                    LandblockSQLWriter = new LandblockSQLWriter();
+                    LandblockSQLWriter.WeenieNames = IDToString.Reader.GetIDToNames("WeenieName.txt");
+                }
+
+                foreach (var landblockInstance in landblockInstances)
+                {
+                    if (landblockInstance.LastModified == DateTime.MinValue)
+                        landblockInstance.LastModified = DateTime.UtcNow;
+                }
+
+                foreach (var landblockInstanceLink in landblockInstanceLinks)
+                {
+                    if (landblockInstanceLink.LastModified == DateTime.MinValue)
+                        landblockInstanceLink.LastModified = DateTime.UtcNow;
+                }
+
+                var sqlFilename = LandblockSQLWriter.GetDefaultFileName(landblockInstances[0]);
+
+                var sqlFolder = outputFolder ?? fi.Directory;
+
+                var sqlFile = new StreamWriter(sqlFolder.FullName + Path.DirectorySeparatorChar + sqlFilename);
+
+                LandblockSQLWriter.CreateSQLDELETEStatement(landblockInstances, sqlFile);
+                sqlFile.WriteLine();
+
+                LandblockSQLWriter.CreateSQLINSERTStatement(landblockInstances, sqlFile);
 
                 sqlFile.Close();
 

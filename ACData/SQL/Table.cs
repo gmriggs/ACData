@@ -3,6 +3,8 @@
     public enum Table
     {
         None,
+        
+        // Weenie
         Weenie,
         AnimPart,
         Attribute,
@@ -26,6 +28,10 @@
         Skill,
         SpellBook,
         String,
-        TextureMap
+        TextureMap,
+
+        // LandblockInstance
+        LandblockInstance,
+        LandblockInstanceLink
     }
 }
