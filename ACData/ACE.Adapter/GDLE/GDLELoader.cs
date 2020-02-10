@@ -22,5 +22,22 @@ namespace ACE.Adapter.GDLE
                 return false;
             }
         }
+
+        public static bool TryLoadRecipeCombined(string file, out Models.RecipeCombined result)
+        {
+            try
+            {
+                var fileText = File.ReadAllText(file);
+
+                result = JsonConvert.DeserializeObject<Models.RecipeCombined>(fileText);
+
+                return true;
+            }
+            catch
+            {
+                result = null;
+                return false;
+            }
+        }
     }
 }

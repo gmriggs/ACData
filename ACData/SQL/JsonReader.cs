@@ -14,7 +14,9 @@ namespace ACData
 
             if (json.Contains("\"weenies\":"))
                 return ContentType.Landblock;
-            if (json.Contains("\"wcid\":"))
+            else if (json.Contains("\"recipe\":"))
+                return ContentType.Recipe;
+            else if (json.Contains("\"wcid\":"))
                 return ContentType.Weenie;
             else
                 return ContentType.Undefined;

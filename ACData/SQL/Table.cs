@@ -30,8 +30,25 @@
         String,
         TextureMap,
 
-        // LandblockInstance
+        // Landblock
         LandblockInstance,
-        LandblockInstanceLink
+        LandblockInstanceLink,
+
+        // Recipe
+        Recipe,
+        RecipeRequirementsBool,
+        RecipeRequirementsDID,
+        RecipeRequirementsFloat,
+        RecipeRequirementsIID,
+        RecipeRequirementsInt,
+        RecipeRequirementsString,
+        RecipeMod,
+        RecipeModsBool,
+        RecipeModsDID,
+        RecipeModsFloat,
+        RecipeModsIID,
+        RecipeModsInt,
+        RecipeModsString,
+        Cookbook,
     }
 }

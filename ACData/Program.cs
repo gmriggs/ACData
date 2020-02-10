@@ -140,6 +140,8 @@ namespace ACData
             {
                 case ContentType.Landblock:
                     return sql2json_landblock(fi, outputFolder);
+                case ContentType.Recipe:
+                    return sql2json_recipe(fi, outputFolder);
                 case ContentType.Weenie:
                     return sql2json_weenie(fi, outputFolder);
                 default:
@@ -169,6 +171,33 @@ namespace ACData
             var jsonFolder = outputFolder ?? fi.Directory;
 
             var jsonFilename = jsonFolder.FullName + Path.DirectorySeparatorChar + fi.Name.Replace(".sql", ".json");
+
+            File.WriteAllText(jsonFilename, json);
+
+            Console.WriteLine($"Converted {fi.FullName} to {jsonFilename}");
+
+            return true;
+        }
+
+        public static bool sql2json_recipe(FileInfo fi, DirectoryInfo outputFolder = null)
+        {
+            var lines = File.ReadAllLines(fi.FullName);
+
+            var sqlReader = new RecipeSQLReader();
+
+            var cookbooks = sqlReader.ReadModel(lines);
+
+            if (!GDLEConverter.TryConvert(cookbooks, out var result))
+            {
+                Console.WriteLine($"Failed to convert {fi.FullName} to json");
+                return false;
+            }
+
+            var jsonFolder = outputFolder ?? fi.Directory;
+
+            var jsonFilename = jsonFolder.FullName + Path.DirectorySeparatorChar + fi.Name.Replace(".sql", ".json");
+
+            var json = JsonConvert.SerializeObject(result, LifestonedConverter.SerializerSettings);
 
             File.WriteAllText(jsonFilename, json);
 
@@ -218,6 +247,8 @@ namespace ACData
             {
                 case ContentType.Landblock:
                     return json2sql_landblock(fi, outputFolder);
+                case ContentType.Recipe:
+                    return json2sql_recipe(fi, outputFolder);
                 case ContentType.Weenie:
                     return json2sql_weenie(fi, outputFolder);
                 default:
@@ -360,6 +391,80 @@ namespace ACData
                 sqlFile.WriteLine();
 
                 LandblockSQLWriter.CreateSQLINSERTStatement(landblockInstances, sqlFile);
+
+                sqlFile.Close();
+
+                Console.WriteLine($"Converted {fi.FullName} to {fi.DirectoryName}{Path.DirectorySeparatorChar}{sqlFilename}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine($"Failed to convert {fi.FullName}");
+                return false;
+            }
+
+            return true;
+        }
+
+        public static CookBookSQLWriter CookBookSQLWriter;
+        public static RecipeSQLWriter RecipeSQLWriter;
+
+        public static bool json2sql_recipe(FileInfo fi, DirectoryInfo outputFolder = null)
+        {
+            // read json into lsd recipe
+            if (!GDLELoader.TryLoadRecipeCombined(fi.FullName, out var result))
+            {
+                Console.WriteLine($"Failed to parse {fi.FullName}");
+                return false;
+            }
+
+            // convert to ace cookbooks + recipe
+            if (!GDLEConverter.TryConvert(result, out var cookbooks, out var recipe))
+            {
+                Console.WriteLine($"Failed to convert {fi.FullName}");
+                return false;
+            }
+
+            // output to sql
+            try
+            {
+                if (RecipeSQLWriter == null)
+                {
+                    RecipeSQLWriter = new RecipeSQLWriter();
+                    RecipeSQLWriter.WeenieNames = IDToString.Reader.GetIDToNames("WeenieName.txt");
+                }
+
+                if (CookBookSQLWriter == null)
+                {
+                    CookBookSQLWriter = new CookBookSQLWriter();
+                    CookBookSQLWriter.WeenieNames = IDToString.Reader.GetIDToNames("WeenieName.txt");
+                }
+
+                if (recipe.LastModified == DateTime.MinValue)
+                    recipe.LastModified = DateTime.UtcNow;
+
+                foreach (var cookbook in cookbooks)
+                {
+                    if (cookbook.LastModified == DateTime.MinValue)
+                        cookbook.LastModified = DateTime.UtcNow;
+                }
+
+                var sqlFilename = RecipeSQLWriter.GetDefaultFileName(recipe, cookbooks);
+
+                var sqlFolder = outputFolder ?? fi.Directory;
+
+                var sqlFile = new StreamWriter(sqlFolder.FullName + Path.DirectorySeparatorChar + sqlFilename);
+
+                RecipeSQLWriter.CreateSQLDELETEStatement(recipe, sqlFile);
+                sqlFile.WriteLine();
+
+                RecipeSQLWriter.CreateSQLINSERTStatement(recipe, sqlFile);
+                sqlFile.WriteLine();
+
+                CookBookSQLWriter.CreateSQLDELETEStatement(cookbooks, sqlFile);
+                sqlFile.WriteLine();
+
+                CookBookSQLWriter.CreateSQLINSERTStatement(cookbooks, sqlFile);
 
                 sqlFile.Close();
 

@@ -56,7 +56,7 @@ namespace ACData
             return LandblockInstances;
         }
 
-        public void BuildLinks()
+        private void BuildLinks()
         {
             foreach (var instance in LandblockInstances)
                 instance.Landblock = LandblockId;
@@ -73,7 +73,7 @@ namespace ACData
             }
         }
 
-        public void AddRecord(List<string> fields)
+        private void AddRecord(List<string> fields)
         {
             if (CurrentTable == Table.LandblockInstance)
             {
@@ -89,7 +89,7 @@ namespace ACData
             }
         }
 
-        public static Table GetTable(string table)
+        private static Table GetTable(string table)
         {
             if (table.Equals("landblock_instance"))
                 return Table.LandblockInstance;
