@@ -50,5 +50,8 @@
         RecipeModsInt,
         RecipeModsString,
         Cookbook,
+
+        // Quest
+        Quest,
     }
 }

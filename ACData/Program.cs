@@ -140,6 +140,8 @@ namespace ACData
             {
                 case ContentType.Landblock:
                     return sql2json_landblock(fi, outputFolder);
+                case ContentType.Quest:
+                    return sql2json_quest(fi, outputFolder);
                 case ContentType.Recipe:
                     return sql2json_recipe(fi, outputFolder);
                 case ContentType.Weenie:
@@ -179,6 +181,33 @@ namespace ACData
             return true;
         }
 
+        public static bool sql2json_landblock(FileInfo fi, DirectoryInfo outputFolder = null)
+        {
+            var lines = File.ReadAllLines(fi.FullName);
+
+            var sqlReader = new LandblockSQLReader();
+
+            var landblockInstances = sqlReader.ReadModel(lines);
+
+            if (!GDLEConverter.TryConvert(landblockInstances, out var result))
+            {
+                Console.WriteLine($"Failed to convert {fi.FullName} to json");
+                return false;
+            }
+
+            var jsonFolder = outputFolder ?? fi.Directory;
+
+            var jsonFilename = jsonFolder.FullName + Path.DirectorySeparatorChar + fi.Name.Replace(".sql", ".json");
+
+            var json = JsonConvert.SerializeObject(result, LifestonedConverter.SerializerSettings);
+
+            File.WriteAllText(jsonFilename, json);
+
+            Console.WriteLine($"Converted {fi.FullName} to {jsonFilename}");
+
+            return true;
+        }
+
         public static bool sql2json_recipe(FileInfo fi, DirectoryInfo outputFolder = null)
         {
             var lines = File.ReadAllLines(fi.FullName);
@@ -206,15 +235,15 @@ namespace ACData
             return true;
         }
 
-        public static bool sql2json_landblock(FileInfo fi, DirectoryInfo outputFolder = null)
+        public static bool sql2json_quest(FileInfo fi, DirectoryInfo outputFolder = null)
         {
             var lines = File.ReadAllLines(fi.FullName);
 
-            var sqlReader = new LandblockSQLReader();
+            var sqlReader = new QuestSQLReader();
 
-            var landblockInstances = sqlReader.ReadModel(lines);
+            var quest = sqlReader.ReadModel(lines);
 
-            if (!GDLEConverter.TryConvert(landblockInstances, out var result))
+            if (!GDLEConverter.TryConvert(quest, out var result))
             {
                 Console.WriteLine($"Failed to convert {fi.FullName} to json");
                 return false;
@@ -247,6 +276,8 @@ namespace ACData
             {
                 case ContentType.Landblock:
                     return json2sql_landblock(fi, outputFolder);
+                case ContentType.Quest:
+                    return json2sql_quest(fi, outputFolder);
                 case ContentType.Recipe:
                     return json2sql_recipe(fi, outputFolder);
                 case ContentType.Weenie:
@@ -465,6 +496,58 @@ namespace ACData
                 sqlFile.WriteLine();
 
                 CookBookSQLWriter.CreateSQLINSERTStatement(cookbooks, sqlFile);
+
+                sqlFile.Close();
+
+                Console.WriteLine($"Converted {fi.FullName} to {fi.DirectoryName}{Path.DirectorySeparatorChar}{sqlFilename}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine($"Failed to convert {fi.FullName}");
+                return false;
+            }
+
+            return true;
+        }
+
+        public static QuestSQLWriter QuestSQLWriter;
+
+        public static bool json2sql_quest(FileInfo fi, DirectoryInfo outputFolder = null)
+        {
+            // read json quest
+            if (!GDLELoader.TryLoadQuest(fi.FullName, out var result))
+            {
+                Console.WriteLine($"Failed to parse {fi.FullName}");
+                return false;
+            }
+
+            // convert to sql quest
+            if (!GDLEConverter.TryConvert(result, out var quest))
+            {
+                Console.WriteLine($"Failed to convert {fi.FullName}");
+                return false;
+            }
+
+            // output to sql
+            try
+            {
+                if (QuestSQLWriter == null)
+                    QuestSQLWriter = new QuestSQLWriter();
+
+                if (quest.LastModified == DateTime.MinValue)
+                    quest.LastModified = DateTime.UtcNow;
+
+                var sqlFilename = fi.Name.Replace(".json", ".sql");
+
+                var sqlFolder = outputFolder ?? fi.Directory;
+
+                var sqlFile = new StreamWriter(sqlFolder.FullName + Path.DirectorySeparatorChar + sqlFilename);
+
+                QuestSQLWriter.CreateSQLDELETEStatement(quest, sqlFile);
+                sqlFile.WriteLine();
+
+                QuestSQLWriter.CreateSQLINSERTStatement(quest, sqlFile);
 
                 sqlFile.Close();
 

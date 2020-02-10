@@ -796,5 +796,50 @@ namespace ACE.Adapter.GDLE
                 return false;
             }
         }
+
+        /// <summary>
+        /// Converts ACE -> GDLE quest
+        /// </summary>
+        public static bool TryConvert(Quest input, out Models.Quest result)
+        {
+            result = new Models.Quest();
+            result.key = input.Name;
+
+            var quest = new Models.QuestValue();
+            quest.fullname = input.Message;
+            quest.mindelta = (int)input.MinDelta;
+            quest.maxsolves = input.MaxSolves;
+
+            result.value = quest;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Converts GDLE -> ACE quest
+        /// </summary>
+        public static bool TryConvert(Models.Quest input, out Quest result)
+        {
+            try
+            {
+                result = new Quest();
+
+                //result.Id // This is an Auto Increment field in the ACE schema
+
+                result.Name = input.key;
+
+                // FIXME: db schema should be int
+                result.MinDelta = (uint)input.value.mindelta;
+                result.MaxSolves = input.value.maxsolves;
+                result.Message = input.value.fullname;
+
+                return true;
+            }
+            catch
+            {
+                result = null;
+                return false;
+            }
+        }
     }
 }

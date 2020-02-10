@@ -94,6 +94,7 @@
     <Compile Include="ACE.Adapter\Lifestoned\LifestonedConverter.cs" />
     <Compile Include="ACE.Adapter\Lifestoned\LifestonedLoader.cs" />
     <Compile Include="ACE.Adapter\SQLFormatters\CookBookSQLWriter.cs" />
+    <Compile Include="ACE.Adapter\SQLFormatters\QuestSQLWriter.cs" />
     <Compile Include="ACE.Adapter\SQLFormatters\RecipeSQLWriter.cs" />
     <Compile Include="ACE.Adapter\SQLFormatters\SQLWriter.cs" />
     <Compile Include="ACE.Adapter\SQLFormatters\WeenieSQLWriter.cs" />
@@ -239,6 +240,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQL\JsonReader.cs" />
     <Compile Include="SQL\LandblockSQLReader.cs" />
+    <Compile Include="SQL\QuestSQLReader.cs" />
     <Compile Include="SQL\RecipeSQLReader.cs" />
     <Compile Include="SQL\SQLReader.cs" />
     <Compile Include="SQL\WeenieSQLReader.cs" />
