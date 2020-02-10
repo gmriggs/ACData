@@ -115,9 +115,19 @@ namespace ACData
                     Console.WriteLine($"GetFields({line}): couldn't find end delimiter after column {startIdx}");
                     break;
                 }
+                
+                // remove start and end quotes
                 var field = line.Substring(startIdx, endIdx - startIdx).Trim();
                 if (field.StartsWith("'") && field.EndsWith("'"))
                     field = field.Substring(1, field.Length - 2);
+
+                // remove escape chars
+                var escIdx = field.IndexOf("''");
+                while (escIdx != -1)
+                {
+                    field = field.Substring(0, escIdx) + field.Substring(escIdx + 1);
+                    escIdx = field.IndexOf("''", escIdx + 1);
+                }
 
                 fields.Add(field);
                 startIdx = endIdx + 2;
