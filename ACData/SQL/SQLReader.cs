@@ -122,12 +122,8 @@ namespace ACData
                     field = field.Substring(1, field.Length - 2);
 
                 // remove escape chars
-                var escIdx = field.IndexOf("''");
-                while (escIdx != -1)
-                {
-                    field = field.Substring(0, escIdx) + field.Substring(escIdx + 1);
-                    escIdx = field.IndexOf("''", escIdx + 1);
-                }
+                // verified: '''' produces ''
+                field = field.Replace("''", "'");
 
                 fields.Add(field);
                 startIdx = endIdx + 2;
