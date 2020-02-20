@@ -25,9 +25,11 @@ namespace ACData
 
                 while (line != null)
                 {
-                    if (line.Trim().Length == 0)
+                    if (line.Trim().Length == 0 || line.StartsWith("/*"))
+                    {
+                        line = streamReader.ReadLine();
                         continue;
-
+                    }
                     else if (line.Contains("`landblock_instance`"))
                         return ContentType.Landblock;
                     else if (line.Contains("`quest`"))
