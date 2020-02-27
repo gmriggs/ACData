@@ -258,7 +258,9 @@
     <Content Include="IDToString\TreasureWielded.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="IDToString\WeenieClassName.txt" />
+    <Content Include="IDToString\WeenieClassName.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="IDToString\WeenieDatClassName.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -189,6 +189,12 @@ namespace ACData
 
             var landblockInstances = sqlReader.ReadModel(lines);
 
+            if (GDLEConverter.WeenieNames == null)
+                GDLEConverter.WeenieNames = IDToString.Reader.GetIDToNames("WeenieName.txt");
+
+            if (GDLEConverter.WeenieClassNames == null)
+                GDLEConverter.WeenieClassNames = IDToString.Reader.GetIDToNames("WeenieClassName.txt");
+
             if (!GDLEConverter.TryConvert(landblockInstances, out var result))
             {
                 Console.WriteLine($"Failed to convert {fi.FullName} to json");

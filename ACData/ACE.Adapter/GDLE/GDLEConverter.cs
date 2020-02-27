@@ -8,11 +8,18 @@ namespace ACE.Adapter.GDLE
 {
     public static class GDLEConverter
     {
+        public static Dictionary<uint, string> WeenieNames;
+        public static Dictionary<uint, string> WeenieClassNames;
+
         /// <summary>
         /// Converts ACE landblock instances -> GDLE landblock instances
         /// </summary>
         public static bool TryConvert(List<LandblockInstance> input, out Models.Landblock result)
         {
+            var instanceWcids = new Dictionary<uint, uint>();
+            foreach (var instance in input)
+                instanceWcids.Add(instance.Guid, instance.WeenieClassId);
+
             result = new Models.Landblock();
 
             if (input.Count == 0)
@@ -22,6 +29,8 @@ namespace ACE.Adapter.GDLE
 
             result.value = new Models.LandblockValue();
 
+            result.desc = $"{result.key}({input[0].Landblock:X4})";
+
             foreach (var lbi in input)
             {
                 if (result.value.weenies == null)
@@ -29,28 +38,35 @@ namespace ACE.Adapter.GDLE
 
                 var weenie = new Models.LandblockWeenie();
                 weenie.id = lbi.Guid;
+                weenie.wcid = lbi.WeenieClassId;
+
+                if (WeenieNames != null && WeenieClassNames != null)
+                {
+                    WeenieNames.TryGetValue(lbi.WeenieClassId, out var weenieName);
+                    WeenieClassNames.TryGetValue(lbi.WeenieClassId, out var weenieClassName);
+
+                    weenie.desc = $"{weenieName}({weenieClassName})";
+                }
 
                 // fix this ***, write it properly.
                 var pos = new Models.Position();
-                pos.ObjCellId = lbi.ObjCellId;
+                pos.objcell_id = lbi.ObjCellId;
 
                 var frame = new Models.Frame();
 
-                frame.Origin = new Models.Origin();
-                frame.Origin.X = lbi.OriginX;
-                frame.Origin.Y = lbi.OriginY;
-                frame.Origin.Z = lbi.OriginZ;
+                frame.origin = new Models.Origin();
+                frame.origin.x = lbi.OriginX;
+                frame.origin.y = lbi.OriginY;
+                frame.origin.z = lbi.OriginZ;
 
-                frame.Angles = new Models.Angles();
-                frame.Angles.W = lbi.AnglesW;
-                frame.Angles.X = lbi.AnglesX;
-                frame.Angles.Y = lbi.AnglesY;
-                frame.Angles.Z = lbi.AnglesZ;
+                frame.angles = new Models.Angles();
+                frame.angles.w = lbi.AnglesW;
+                frame.angles.x = lbi.AnglesX;
+                frame.angles.y = lbi.AnglesY;
+                frame.angles.z = lbi.AnglesZ;
 
-                pos.Frame = frame;
+                pos.frame = frame;
                 weenie.pos = pos;
-
-                weenie.wcid = lbi.WeenieClassId;
 
                 result.value.weenies.Add(weenie);
 
@@ -62,9 +78,22 @@ namespace ACE.Adapter.GDLE
                             result.value.links = new List<Models.LandblockLink>();
 
                         var _link = new Models.LandblockLink();
-                        _link.source = link.ParentGuid;
-                        _link.target = link.ChildGuid;
+                        _link.target = link.ParentGuid;
+                        _link.source = link.ChildGuid;
 
+                        if (WeenieNames != null && WeenieClassNames != null)
+                        {
+                            WeenieNames.TryGetValue(lbi.WeenieClassId, out var targetName);
+                            WeenieClassNames.TryGetValue(lbi.WeenieClassId, out var targetClassName);
+
+                            if (instanceWcids.TryGetValue(link.ChildGuid, out var sourceWcid))
+                            {
+                                WeenieNames.TryGetValue(sourceWcid, out var sourceName);
+                                WeenieClassNames.TryGetValue(sourceWcid, out var sourceClassName);
+
+                                _link.desc = $"{sourceName}({sourceClassName})(wcid: {sourceWcid}) -> {targetClassName}(wcid: {lbi.WeenieClassId})";
+                            }
+                        }
                         result.value.links.Add(_link);
                     }
                 }
@@ -92,14 +121,14 @@ namespace ACE.Adapter.GDLE
                     //result.Landblock = input.key; ACE uses a virtual column here of (result.ObjCellId >> 16)
                     result.WeenieClassId = value.wcid;
 
-                    result.ObjCellId = value.pos.ObjCellId;
-                    result.OriginX = (float)value.pos.Frame.Origin.X;
-                    result.OriginY = (float)value.pos.Frame.Origin.Y;
-                    result.OriginZ = (float)value.pos.Frame.Origin.Z;
-                    result.AnglesW = (float)value.pos.Frame.Angles.W;
-                    result.AnglesX = (float)value.pos.Frame.Angles.X;
-                    result.AnglesY = (float)value.pos.Frame.Angles.Y;
-                    result.AnglesZ = (float)value.pos.Frame.Angles.Z;
+                    result.ObjCellId = value.pos.objcell_id;
+                    result.OriginX = value.pos.frame.origin.x;
+                    result.OriginY = value.pos.frame.origin.y;
+                    result.OriginZ = value.pos.frame.origin.z;
+                    result.AnglesW = value.pos.frame.angles.w;
+                    result.AnglesX = value.pos.frame.angles.x;
+                    result.AnglesY = value.pos.frame.angles.y;
+                    result.AnglesZ = value.pos.frame.angles.z;
 
                     results.Add(result);
                 }
@@ -110,8 +139,8 @@ namespace ACE.Adapter.GDLE
                     {
                         var result = new LandblockInstanceLink();
 
-                        result.ParentGuid = value.source;
-                        result.ChildGuid = value.target;
+                        result.ParentGuid = value.target;
+                        result.ChildGuid = value.source;
 
                         links.Add(result);
                     }

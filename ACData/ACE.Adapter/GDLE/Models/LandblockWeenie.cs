@@ -2,9 +2,9 @@
 {
     public class LandblockWeenie
     {
-        public string _desc { get; set; }
         public uint id { get; set; }
-        public Position pos { get; set; }
         public uint wcid { get; set; }
+        public string desc { get; set; }
+        public Position pos { get; set; }
     }
 }

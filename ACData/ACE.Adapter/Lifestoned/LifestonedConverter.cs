@@ -1076,6 +1076,7 @@ namespace ACE.Adapter.Lifestoned
             //SerializerSettings.Converters.Add(new JavaScriptDateTimeConverter());
             SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+            SerializerSettings.Formatting = Formatting.Indented;
 
             WeenieClassNames = Reader.GetIDToNames("WeenieDatClassName.txt");
         }
