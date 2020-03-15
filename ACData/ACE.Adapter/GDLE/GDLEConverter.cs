@@ -418,7 +418,7 @@ namespace ACE.Adapter.GDLE
 
                     foreach (var didMod in recipeMod.RecipeModsDID)
                     {
-                        mod.DIDRquirements.Add(new Models.DIDRequirement
+                        mod.DIDRequirements.Add(new Models.DIDRequirement
                         {
                             Stat = didMod.Stat,
                             Value = didMod.Value,
@@ -695,9 +695,9 @@ namespace ACE.Adapter.GDLE
                         }
                     }
 
-                    if (value.DIDRquirements != null)
+                    if (value.DIDRequirements != null)
                     {
-                        foreach (var mod in value.DIDRquirements)
+                        foreach (var mod in value.DIDRequirements)
                         {
                             recipeMod.RecipeModsDID.Add(new RecipeModsDID
                             {
