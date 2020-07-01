@@ -1,4 +1,4 @@
-﻿namespace ACData
+﻿namespace ACDataLib
 {
     public enum ContentType
     {

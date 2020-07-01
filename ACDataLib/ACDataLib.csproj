@@ -180,6 +180,7 @@
     <Compile Include="ACE.Entity\Enum\WeenieType.cs" />
     <Compile Include="ACE.Entity\Enum\WieldRequirement.cs" />
     <Compile Include="ContentType.cs" />
+    <Compile Include="Converter.cs" />
     <Compile Include="IDToString\Reader.cs" />
     <Compile Include="Model\CookBook.cs" />
     <Compile Include="Model\Encounter.cs" />

@@ -4,7 +4,7 @@ using System.IO;
 using System.Globalization;
 using System.Reflection;
 
-namespace ACData
+namespace ACDataLib
 {
     public class SQLReader
     {

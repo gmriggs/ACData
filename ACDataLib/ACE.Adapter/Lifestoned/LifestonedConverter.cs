@@ -9,7 +9,7 @@ using ACE.Database.Models.World;
 using ACE.Entity.Enum;
 using ACE.Entity.Enum.Properties;
 
-using ACData.IDToString;
+using ACDataLib.IDToString;
 
 namespace ACE.Adapter.Lifestoned
 {

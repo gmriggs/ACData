@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 using ACE.Database.Models.World;
 
-namespace ACData
+namespace ACDataLib
 {
     public class WeenieSQLReader: SQLReader
     {

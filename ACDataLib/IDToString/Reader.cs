@@ -5,7 +5,7 @@ using System.IO;
 
 using ACE.Database.Models.World;
 
-namespace ACData.IDToString
+namespace ACDataLib.IDToString
 {
     public static class Reader
     {

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace ACData
+namespace ACDataLib
 {
     public class JsonReader
     {
