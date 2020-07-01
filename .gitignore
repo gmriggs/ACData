@@ -2,3 +2,5 @@
 packages/*
 ACData/obj/*
 ACData/bin/*
+ACDataLib/obj/*
+ACDataLib/bin/*

@@ -1,0 +1,276 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8442E4B5-3DC3-4340-8D04-659E96646BED}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ACDataLib</RootNamespace>
+    <AssemblyName>ACDataLib</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Lifestoned.DataModel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Lifestoned.DataModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.4.6.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ACE.Adapter\Enum\WeenieClassID.cs" />
+    <Compile Include="ACE.Adapter\GDLE\GDLEConverter.cs" />
+    <Compile Include="ACE.Adapter\GDLE\GDLELoader.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\Angles.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\BoolRequirement.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\CreateOffset.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\DIDRequirement.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\DoubleRequirement.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\Event.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\EventValue.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\FloatRequirement.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\Frame.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\IIDRequirement.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\IntRequirement.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\Landblock.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\LandblockLink.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\LandblockValue.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\LandblockWeenie.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\Metadata.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\MetaSpell.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\Mod.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\Origin.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\Position.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\Quest.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\QuestValue.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\Recipe.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\RecipeCombined.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\RecipePrecursor.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\RecipeRequirements.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\Spell.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\SpellBaseHash.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\Spells.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\SpellTable.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\SpellValue.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\StatMod.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\StringRequirement.cs" />
+    <Compile Include="ACE.Adapter\GDLE\Models\WorldSpawns.cs" />
+    <Compile Include="ACE.Adapter\Lifestoned\LifestonedConverter.cs" />
+    <Compile Include="ACE.Adapter\Lifestoned\LifestonedLoader.cs" />
+    <Compile Include="ACE.Adapter\SQLFormatters\CookBookSQLWriter.cs" />
+    <Compile Include="ACE.Adapter\SQLFormatters\LandblockSQLWriter.cs" />
+    <Compile Include="ACE.Adapter\SQLFormatters\QuestSQLWriter.cs" />
+    <Compile Include="ACE.Adapter\SQLFormatters\RecipeSQLWriter.cs" />
+    <Compile Include="ACE.Adapter\SQLFormatters\SQLWriter.cs" />
+    <Compile Include="ACE.Adapter\SQLFormatters\WeenieSQLWriter.cs" />
+    <Compile Include="ACE.Entity\Enum\ActivationResponse.cs" />
+    <Compile Include="ACE.Entity\Enum\AetheriaBitfield.cs" />
+    <Compile Include="ACE.Entity\Enum\AiOption.cs" />
+    <Compile Include="ACE.Entity\Enum\AmmoType.cs" />
+    <Compile Include="ACE.Entity\Enum\ArmorType.cs" />
+    <Compile Include="ACE.Entity\Enum\AttackHeight.cs" />
+    <Compile Include="ACE.Entity\Enum\AttackType.cs" />
+    <Compile Include="ACE.Entity\Enum\AttunedStatus.cs" />
+    <Compile Include="ACE.Entity\Enum\BondedStatus.cs" />
+    <Compile Include="ACE.Entity\Enum\Channel.cs" />
+    <Compile Include="ACE.Entity\Enum\CombatBodyPart.cs" />
+    <Compile Include="ACE.Entity\Enum\CombatMode.cs" />
+    <Compile Include="ACE.Entity\Enum\CombatStyle.cs" />
+    <Compile Include="ACE.Entity\Enum\CombatUse.cs" />
+    <Compile Include="ACE.Entity\Enum\CompareType.cs" />
+    <Compile Include="ACE.Entity\Enum\ContractId.cs" />
+    <Compile Include="ACE.Entity\Enum\CoverageMask.cs" />
+    <Compile Include="ACE.Entity\Enum\CreatureType.cs" />
+    <Compile Include="ACE.Entity\Enum\DamageType.cs" />
+    <Compile Include="ACE.Entity\Enum\DestinationType.cs" />
+    <Compile Include="ACE.Entity\Enum\EmoteCategory.cs" />
+    <Compile Include="ACE.Entity\Enum\EmoteType.cs" />
+    <Compile Include="ACE.Entity\Enum\EquipMask.cs" />
+    <Compile Include="ACE.Entity\Enum\EquipmentSet.cs" />
+    <Compile Include="ACE.Entity\Enum\Gender.cs" />
+    <Compile Include="ACE.Entity\Enum\GeneratorDestruct.cs" />
+    <Compile Include="ACE.Entity\Enum\GeneratorTimeType.cs" />
+    <Compile Include="ACE.Entity\Enum\GeneratorType.cs" />
+    <Compile Include="ACE.Entity\Enum\HeritageGroup.cs" />
+    <Compile Include="ACE.Entity\Enum\HookType.cs" />
+    <Compile Include="ACE.Entity\Enum\HouseStatus.cs" />
+    <Compile Include="ACE.Entity\Enum\HouseType.cs" />
+    <Compile Include="ACE.Entity\Enum\ImbuedEffectType.cs" />
+    <Compile Include="ACE.Entity\Enum\ItemType.cs" />
+    <Compile Include="ACE.Entity\Enum\ItemXpStyle.cs" />
+    <Compile Include="ACE.Entity\Enum\MaterialType.cs" />
+    <Compile Include="ACE.Entity\Enum\ModificationOperation.cs" />
+    <Compile Include="ACE.Entity\Enum\ModificationType.cs" />
+    <Compile Include="ACE.Entity\Enum\MotionCommand.cs" />
+    <Compile Include="ACE.Entity\Enum\MotionStance.cs" />
+    <Compile Include="ACE.Entity\Enum\ObjectDescriptionFlag.cs" />
+    <Compile Include="ACE.Entity\Enum\PaletteTemplate.cs" />
+    <Compile Include="ACE.Entity\Enum\ParentLocation.cs" />
+    <Compile Include="ACE.Entity\Enum\PhysicsDescriptionFlag.cs" />
+    <Compile Include="ACE.Entity\Enum\PhysicsState.cs" />
+    <Compile Include="ACE.Entity\Enum\Placement.cs" />
+    <Compile Include="ACE.Entity\Enum\PlayerKillerStatus.cs" />
+    <Compile Include="ACE.Entity\Enum\PlayScript.cs" />
+    <Compile Include="ACE.Entity\Enum\PortalBitmask.cs" />
+    <Compile Include="ACE.Entity\Enum\Properties\PositionType.cs" />
+    <Compile Include="ACE.Entity\Enum\Properties\PropertyAttribute.cs" />
+    <Compile Include="ACE.Entity\Enum\Properties\PropertyAttribute2nd.cs" />
+    <Compile Include="ACE.Entity\Enum\Properties\PropertyBool.cs" />
+    <Compile Include="ACE.Entity\Enum\Properties\PropertyDataId.cs" />
+    <Compile Include="ACE.Entity\Enum\Properties\PropertyFloat.cs" />
+    <Compile Include="ACE.Entity\Enum\Properties\PropertyInstanceId.cs" />
+    <Compile Include="ACE.Entity\Enum\Properties\PropertyInt.cs" />
+    <Compile Include="ACE.Entity\Enum\Properties\PropertyInt64.cs" />
+    <Compile Include="ACE.Entity\Enum\Properties\PropertyString.cs" />
+    <Compile Include="ACE.Entity\Enum\RadarBehavior.cs" />
+    <Compile Include="ACE.Entity\Enum\RadarColor.cs" />
+    <Compile Include="ACE.Entity\Enum\RecipeResult.cs" />
+    <Compile Include="ACE.Entity\Enum\RecipeSourceType.cs" />
+    <Compile Include="ACE.Entity\Enum\RecipeType.cs" />
+    <Compile Include="ACE.Entity\Enum\RegenerationType.cs" />
+    <Compile Include="ACE.Entity\Enum\RegenLocationType.cs" />
+    <Compile Include="ACE.Entity\Enum\RequirementType.cs" />
+    <Compile Include="ACE.Entity\Enum\Skill.cs" />
+    <Compile Include="ACE.Entity\Enum\SkillAdvancementClass.cs" />
+    <Compile Include="ACE.Entity\Enum\Sound.cs" />
+    <Compile Include="ACE.Entity\Enum\SpellId.cs" />
+    <Compile Include="ACE.Entity\Enum\SubscriptionStatus.cs" />
+    <Compile Include="ACE.Entity\Enum\SummoningMastery.cs" />
+    <Compile Include="ACE.Entity\Enum\TargetingTactic.cs" />
+    <Compile Include="ACE.Entity\Enum\Tolerance.cs" />
+    <Compile Include="ACE.Entity\Enum\UiEffects.cs" />
+    <Compile Include="ACE.Entity\Enum\Usable.cs" />
+    <Compile Include="ACE.Entity\Enum\VendorType.cs" />
+    <Compile Include="ACE.Entity\Enum\WeaponType.cs" />
+    <Compile Include="ACE.Entity\Enum\WeenieHeaderFlags.cs" />
+    <Compile Include="ACE.Entity\Enum\WeenieType.cs" />
+    <Compile Include="ACE.Entity\Enum\WieldRequirement.cs" />
+    <Compile Include="ContentType.cs" />
+    <Compile Include="IDToString\Reader.cs" />
+    <Compile Include="Model\CookBook.cs" />
+    <Compile Include="Model\Encounter.cs" />
+    <Compile Include="Model\Event.cs" />
+    <Compile Include="Model\HousePortal.cs" />
+    <Compile Include="Model\LandblockInstance.cs" />
+    <Compile Include="Model\LandblockInstanceLink.cs" />
+    <Compile Include="Model\PointsOfInterest.cs" />
+    <Compile Include="Model\Quest.cs" />
+    <Compile Include="Model\Recipe.cs" />
+    <Compile Include="Model\RecipeMod.cs" />
+    <Compile Include="Model\RecipeModsBool.cs" />
+    <Compile Include="Model\RecipeModsDID.cs" />
+    <Compile Include="Model\RecipeModsFloat.cs" />
+    <Compile Include="Model\RecipeModsIID.cs" />
+    <Compile Include="Model\RecipeModsInt.cs" />
+    <Compile Include="Model\RecipeModsString.cs" />
+    <Compile Include="Model\RecipeRequirementsBool.cs" />
+    <Compile Include="Model\RecipeRequirementsDID.cs" />
+    <Compile Include="Model\RecipeRequirementsFloat.cs" />
+    <Compile Include="Model\RecipeRequirementsIID.cs" />
+    <Compile Include="Model\RecipeRequirementsInt.cs" />
+    <Compile Include="Model\RecipeRequirementsString.cs" />
+    <Compile Include="Model\Spell.cs" />
+    <Compile Include="Model\TreasureDeath.cs" />
+    <Compile Include="Model\TreasureMaterialBase.cs" />
+    <Compile Include="Model\TreasureMaterialColor.cs" />
+    <Compile Include="Model\TreasureMaterialGroups.cs" />
+    <Compile Include="Model\TreasureWielded.cs" />
+    <Compile Include="Model\Version.cs" />
+    <Compile Include="Model\Weenie.cs" />
+    <Compile Include="Model\WeenieExtensions.cs" />
+    <Compile Include="Model\WeeniePropertiesAnimPart.cs" />
+    <Compile Include="Model\WeeniePropertiesAttribute.cs" />
+    <Compile Include="Model\WeeniePropertiesAttribute2nd.cs" />
+    <Compile Include="Model\WeeniePropertiesBodyPart.cs" />
+    <Compile Include="Model\WeeniePropertiesBook.cs" />
+    <Compile Include="Model\WeeniePropertiesBookPageData.cs" />
+    <Compile Include="Model\WeeniePropertiesBool.cs" />
+    <Compile Include="Model\WeeniePropertiesCreateList.cs" />
+    <Compile Include="Model\WeeniePropertiesDID.cs" />
+    <Compile Include="Model\WeeniePropertiesEmote.cs" />
+    <Compile Include="Model\WeeniePropertiesEmoteAction.cs" />
+    <Compile Include="Model\WeeniePropertiesEventFilter.cs" />
+    <Compile Include="Model\WeeniePropertiesFloat.cs" />
+    <Compile Include="Model\WeeniePropertiesGenerator.cs" />
+    <Compile Include="Model\WeeniePropertiesIID.cs" />
+    <Compile Include="Model\WeeniePropertiesInt.cs" />
+    <Compile Include="Model\WeeniePropertiesInt64.cs" />
+    <Compile Include="Model\WeeniePropertiesPalette.cs" />
+    <Compile Include="Model\WeeniePropertiesPosition.cs" />
+    <Compile Include="Model\WeeniePropertiesSkill.cs" />
+    <Compile Include="Model\WeeniePropertiesSpellBook.cs" />
+    <Compile Include="Model\WeeniePropertiesString.cs" />
+    <Compile Include="Model\WeeniePropertiesTextureMap.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SQL\JsonReader.cs" />
+    <Compile Include="SQL\LandblockSQLReader.cs" />
+    <Compile Include="SQL\QuestSQLReader.cs" />
+    <Compile Include="SQL\RecipeSQLReader.cs" />
+    <Compile Include="SQL\SQLReader.cs" />
+    <Compile Include="SQL\Table.cs" />
+    <Compile Include="SQL\WeenieSQLReader.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="IDToString\SpellName.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="IDToString\TreasureDeath.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="IDToString\TreasureWielded.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="IDToString\WeenieClassName.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="IDToString\WeenieDatClassName.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="IDToString\WeenieName.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="lib\Lifestoned.DataModel.dll" />
+    <Content Include="lib\readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="lib\Lifestoned LICENSE" />
+    <None Include="lib\README.md" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
