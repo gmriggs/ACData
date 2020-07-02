@@ -13,8 +13,25 @@ using Newtonsoft.Json;
 
 namespace ACDataLib
 {
+    public enum Mode
+    {
+        File,
+        String
+    };
+    
+    public enum FileFormat
+    {
+        SQL,
+        JSON
+    };
+
     public static class Converter
     {
+        public static Mode Mode = Mode.File;
+        
+        // if Mode == String, write to Output string
+        public static string Output;
+
         public static void Process(string path, string searchPattern, Action<FileInfo> callback)
         {
             Process(path, new List<string>() { searchPattern }, callback);
@@ -73,14 +90,26 @@ namespace ACDataLib
         public static bool Convert(FileInfo fi, DirectoryInfo outputFolder = null)
         {
             if (fi.Name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
-                return json2sql(fi, outputFolder);
+                return json2sql(fi, null, outputFolder);
             else if (fi.Name.EndsWith(".sql", StringComparison.OrdinalIgnoreCase))
-                return sql2json(fi, outputFolder);
+                return sql2json(fi, null, outputFolder);
             else
                 return false;
         }
 
-        public static bool sql2json(FileInfo fi, DirectoryInfo outputFolder = null)
+        public static bool Convert(string[] lines, FileFormat inputFormat)
+        {
+            var dummy = new FileInfo("");
+
+            if (inputFormat == FileFormat.SQL)
+                return sql2json(dummy, lines);
+            else if (inputFormat == FileFormat.JSON)
+                return json2sql(dummy, lines);
+            else
+                return false;
+        }
+
+        public static bool sql2json(FileInfo fi, string[] lines, DirectoryInfo outputFolder = null)
         {
             var contentType = SQLReader.GetContentType(fi.FullName);
 
@@ -93,21 +122,21 @@ namespace ACDataLib
             switch (contentType)
             {
                 case ContentType.Landblock:
-                    return sql2json_landblock(fi, outputFolder);
+                    return sql2json_landblock(fi, lines, outputFolder);
                 case ContentType.Quest:
-                    return sql2json_quest(fi, outputFolder);
+                    return sql2json_quest(fi, lines, outputFolder);
                 case ContentType.Recipe:
-                    return sql2json_recipe(fi, outputFolder);
+                    return sql2json_recipe(fi, lines, outputFolder);
                 case ContentType.Weenie:
-                    return sql2json_weenie(fi, outputFolder);
+                    return sql2json_weenie(fi, lines, outputFolder);
                 default:
                     return false;
             }
         }
 
-        public static bool sql2json_weenie(FileInfo fi, DirectoryInfo outputFolder = null)
+        public static bool sql2json_weenie(FileInfo fi, string[] lines = null, DirectoryInfo outputFolder = null)
         {
-            var lines = File.ReadAllLines(fi.FullName);
+            lines = lines ?? File.ReadAllLines(fi.FullName);
 
             var sqlReader = new WeenieSQLReader();
             var weenie = sqlReader.ReadModel(lines);
@@ -124,6 +153,12 @@ namespace ACDataLib
                 json = JsonConvert.SerializeObject(json_weenie, LifestonedConverter.SerializerSettings);
             }
 
+            if (Mode == Mode.String)
+            {
+                Output = json;
+                return true;
+            }
+
             var jsonFolder = outputFolder ?? fi.Directory;
 
             var jsonFilename = jsonFolder.FullName + Path.DirectorySeparatorChar + fi.Name.Replace(".sql", ".json");
@@ -135,9 +170,9 @@ namespace ACDataLib
             return true;
         }
 
-        public static bool sql2json_landblock(FileInfo fi, DirectoryInfo outputFolder = null)
+        public static bool sql2json_landblock(FileInfo fi, string[] lines = null, DirectoryInfo outputFolder = null)
         {
-            var lines = File.ReadAllLines(fi.FullName);
+            lines = lines ?? File.ReadAllLines(fi.FullName);
 
             var sqlReader = new LandblockSQLReader();
 
@@ -161,6 +196,12 @@ namespace ACDataLib
 
             var json = JsonConvert.SerializeObject(result, LifestonedConverter.SerializerSettings);
 
+            if (Mode == Mode.String)
+            {
+                Output = json;
+                return true;
+            }
+
             File.WriteAllText(jsonFilename, json);
 
             Console.WriteLine($"Converted {fi.FullName} to {jsonFilename}");
@@ -168,9 +209,9 @@ namespace ACDataLib
             return true;
         }
 
-        public static bool sql2json_recipe(FileInfo fi, DirectoryInfo outputFolder = null)
+        public static bool sql2json_recipe(FileInfo fi, string[] lines = null, DirectoryInfo outputFolder = null)
         {
-            var lines = File.ReadAllLines(fi.FullName);
+            lines = lines ?? File.ReadAllLines(fi.FullName);
 
             var sqlReader = new RecipeSQLReader();
 
@@ -188,6 +229,12 @@ namespace ACDataLib
 
             var json = JsonConvert.SerializeObject(result, LifestonedConverter.SerializerSettings);
 
+            if (Mode == Mode.String)
+            {
+                Output = json;
+                return true;
+            }
+
             File.WriteAllText(jsonFilename, json);
 
             Console.WriteLine($"Converted {fi.FullName} to {jsonFilename}");
@@ -195,9 +242,9 @@ namespace ACDataLib
             return true;
         }
 
-        public static bool sql2json_quest(FileInfo fi, DirectoryInfo outputFolder = null)
+        public static bool sql2json_quest(FileInfo fi, string[] lines = null, DirectoryInfo outputFolder = null)
         {
-            var lines = File.ReadAllLines(fi.FullName);
+            lines = lines ?? File.ReadAllLines(fi.FullName);
 
             var sqlReader = new QuestSQLReader();
 
@@ -215,6 +262,12 @@ namespace ACDataLib
 
             var json = JsonConvert.SerializeObject(result, LifestonedConverter.SerializerSettings);
 
+            if (Mode == Mode.String)
+            {
+                Output = json;
+                return true;
+            }
+
             File.WriteAllText(jsonFilename, json);
 
             Console.WriteLine($"Converted {fi.FullName} to {jsonFilename}");
@@ -222,7 +275,7 @@ namespace ACDataLib
             return true;
         }
 
-        public static bool json2sql(FileInfo fi, DirectoryInfo outputFolder = null)
+        public static bool json2sql(FileInfo fi, string[] lines = null, DirectoryInfo outputFolder = null)
         {
             var contentType = JsonReader.GetContentType(fi.FullName);
 
@@ -235,13 +288,13 @@ namespace ACDataLib
             switch (contentType)
             {
                 case ContentType.Landblock:
-                    return json2sql_landblock(fi, outputFolder);
+                    return json2sql_landblock(fi, lines, outputFolder);
                 case ContentType.Quest:
-                    return json2sql_quest(fi, outputFolder);
+                    return json2sql_quest(fi, lines, outputFolder);
                 case ContentType.Recipe:
-                    return json2sql_recipe(fi, outputFolder);
+                    return json2sql_recipe(fi, lines, outputFolder);
                 case ContentType.Weenie:
-                    return json2sql_weenie(fi, outputFolder);
+                    return json2sql_weenie(fi, lines, outputFolder);
                 default:
                     return false;
             }
@@ -249,7 +302,7 @@ namespace ACDataLib
 
         public static WeenieSQLWriter WeenieSQLWriter;
 
-        public static bool json2sql_weenie(FileInfo fi, DirectoryInfo outputFolder = null)
+        public static bool json2sql_weenie(FileInfo fi, string[] lines = null, DirectoryInfo outputFolder = null)
         {
             if (WeenieSQLWriter == null)
             {
@@ -261,10 +314,22 @@ namespace ACDataLib
             }
 
             // read json into lsd weenie
-            if (!LifestonedLoader.TryLoadWeenie(fi.FullName, out var weenie))
+            Lifestoned.DataModel.Gdle.Weenie weenie = null;
+            if (lines == null)
             {
-                Console.WriteLine($"Failed to parse {fi.FullName}");
-                return false;
+                if (!LifestonedLoader.TryLoadWeenie(fi.FullName, out weenie))
+                {
+                    Console.WriteLine($"Failed to parse {fi.FullName}");
+                    return false;
+                }
+            }
+            else
+            {
+                if (!LifestonedLoader.TryLoadWeenie(lines, out weenie))
+                {
+                    Console.WriteLine($"Failed to parse weenie");
+                    return false;
+                }
             }
 
             // convert to ace weenie
@@ -280,11 +345,23 @@ namespace ACDataLib
                 if (output.LastModified == DateTime.MinValue)
                     output.LastModified = DateTime.UtcNow;
 
-                var sqlFilename = WeenieSQLWriter.GetDefaultFileName(output);
+                StreamWriter sqlFile = null;
+                string sqlFilename = null;
+                MemoryStream memoryStream = null;
 
-                var sqlFolder = outputFolder ?? fi.Directory;
+                if (lines == null)
+                {
+                    sqlFilename = WeenieSQLWriter.GetDefaultFileName(output);
 
-                var sqlFile = new StreamWriter(sqlFolder.FullName + Path.DirectorySeparatorChar + sqlFilename);
+                    var sqlFolder = outputFolder ?? fi.Directory;
+
+                    sqlFile = new StreamWriter(sqlFolder.FullName + Path.DirectorySeparatorChar + sqlFilename);
+                }
+                else
+                {
+                    memoryStream = new MemoryStream();
+                    sqlFile = new StreamWriter(memoryStream);
+                }
 
                 WeenieSQLWriter.CreateSQLDELETEStatement(output, sqlFile);
                 sqlFile.WriteLine();
@@ -300,6 +377,12 @@ namespace ACDataLib
 
                 sqlFile.Close();
 
+                if (lines == null)
+                {
+                    Output = memoryStream.ToString();
+                    return true;
+                }
+
                 Console.WriteLine($"Converted {fi.FullName} to {fi.DirectoryName}{Path.DirectorySeparatorChar}{sqlFilename}");
             }
             catch (Exception e)
@@ -314,13 +397,25 @@ namespace ACDataLib
 
         public static LandblockSQLWriter LandblockSQLWriter;
 
-        public static bool json2sql_landblock(FileInfo fi, DirectoryInfo outputFolder = null)
+        public static bool json2sql_landblock(FileInfo fi, string[] lines = null, DirectoryInfo outputFolder = null)
         {
             // read json into gdle spawnmap
-            if (!GDLELoader.TryLoadLandblock(fi.FullName, out var result))
+            Landblock result = null;
+            if (lines == null)
             {
-                Console.WriteLine($"Failed to parse {fi.FullName}");
-                return false;
+                if (!GDLELoader.TryLoadLandblock(fi.FullName, out result))
+                {
+                    Console.WriteLine($"Failed to parse {fi.FullName}");
+                    return false;
+                }
+            }
+            else
+            {
+                if (!GDLELoader.TryLoadLandblock(lines, out result))
+                {
+                    Console.WriteLine($"Failed to parse landblock");
+                    return false;
+                }
             }
 
             // convert to sql landblock instances
@@ -372,11 +467,23 @@ namespace ACDataLib
                         landblockInstanceLink.LastModified = DateTime.UtcNow;
                 }
 
-                var sqlFilename = LandblockSQLWriter.GetDefaultFileName(landblockInstances[0]);
+                StreamWriter sqlFile = null;
+                string sqlFilename = null;
+                MemoryStream memoryStream = null;
+                
+                if (lines == null)
+                {
+                    sqlFilename = LandblockSQLWriter.GetDefaultFileName(landblockInstances[0]);
 
-                var sqlFolder = outputFolder ?? fi.Directory;
+                    var sqlFolder = outputFolder ?? fi.Directory;
 
-                var sqlFile = new StreamWriter(sqlFolder.FullName + Path.DirectorySeparatorChar + sqlFilename);
+                    sqlFile = new StreamWriter(sqlFolder.FullName + Path.DirectorySeparatorChar + sqlFilename);
+                }
+                else
+                {
+                    memoryStream = new MemoryStream();
+                    sqlFile = new StreamWriter(memoryStream);
+                }
 
                 LandblockSQLWriter.CreateSQLDELETEStatement(landblockInstances, sqlFile);
                 sqlFile.WriteLine();
@@ -384,6 +491,12 @@ namespace ACDataLib
                 LandblockSQLWriter.CreateSQLINSERTStatement(landblockInstances, sqlFile);
 
                 sqlFile.Close();
+
+                if (lines != null)
+                {
+                    Output = memoryStream.ToString();
+                    return true;
+                }
 
                 Console.WriteLine($"Converted {fi.FullName} to {fi.DirectoryName}{Path.DirectorySeparatorChar}{sqlFilename}");
             }
@@ -400,13 +513,25 @@ namespace ACDataLib
         public static CookBookSQLWriter CookBookSQLWriter;
         public static RecipeSQLWriter RecipeSQLWriter;
 
-        public static bool json2sql_recipe(FileInfo fi, DirectoryInfo outputFolder = null)
+        public static bool json2sql_recipe(FileInfo fi, string[] lines = null, DirectoryInfo outputFolder = null)
         {
             // read json into lsd recipe
-            if (!GDLELoader.TryLoadRecipeCombined(fi.FullName, out var result))
+            RecipeCombined result = null;
+            if (lines == null)
             {
-                Console.WriteLine($"Failed to parse {fi.FullName}");
-                return false;
+                if (!GDLELoader.TryLoadRecipeCombined(fi.FullName, out result))
+                {
+                    Console.WriteLine($"Failed to parse {fi.FullName}");
+                    return false;
+                }
+            }
+            else
+            {
+                if (!GDLELoader.TryLoadRecipeCombined(lines, out result))
+                {
+                    Console.WriteLine($"Failed to parse recipe");
+                    return false;
+                }
             }
 
             // convert to ace cookbooks + recipe
@@ -440,11 +565,23 @@ namespace ACDataLib
                         cookbook.LastModified = DateTime.UtcNow;
                 }
 
-                var sqlFilename = RecipeSQLWriter.GetDefaultFileName(recipe, cookbooks);
+                StreamWriter sqlFile = null;
+                string sqlFilename = null;
+                MemoryStream memoryStream = null;
+                
+                if (lines == null)
+                {
+                    sqlFilename = RecipeSQLWriter.GetDefaultFileName(recipe, cookbooks);
 
-                var sqlFolder = outputFolder ?? fi.Directory;
+                    var sqlFolder = outputFolder ?? fi.Directory;
 
-                var sqlFile = new StreamWriter(sqlFolder.FullName + Path.DirectorySeparatorChar + sqlFilename);
+                    sqlFile = new StreamWriter(sqlFolder.FullName + Path.DirectorySeparatorChar + sqlFilename);
+                }
+                else
+                {
+                    memoryStream = new MemoryStream();
+                    sqlFile = new StreamWriter(memoryStream);
+                }
 
                 RecipeSQLWriter.CreateSQLDELETEStatement(recipe, sqlFile);
                 sqlFile.WriteLine();
@@ -458,6 +595,12 @@ namespace ACDataLib
                 CookBookSQLWriter.CreateSQLINSERTStatement(cookbooks, sqlFile);
 
                 sqlFile.Close();
+
+                if (lines != null)
+                {
+                    Output = memoryStream.ToString();
+                    return true;
+                }
 
                 Console.WriteLine($"Converted {fi.FullName} to {fi.DirectoryName}{Path.DirectorySeparatorChar}{sqlFilename}");
             }
@@ -473,13 +616,25 @@ namespace ACDataLib
 
         public static QuestSQLWriter QuestSQLWriter;
 
-        public static bool json2sql_quest(FileInfo fi, DirectoryInfo outputFolder = null)
+        public static bool json2sql_quest(FileInfo fi, string[] lines = null, DirectoryInfo outputFolder = null)
         {
             // read json quest
-            if (!GDLELoader.TryLoadQuest(fi.FullName, out var result))
+            Quest result = null;
+            if (lines == null)
             {
-                Console.WriteLine($"Failed to parse {fi.FullName}");
-                return false;
+                if (!GDLELoader.TryLoadQuest(fi.FullName, out result))
+                {
+                    Console.WriteLine($"Failed to parse {fi.FullName}");
+                    return false;
+                }
+            }
+            else
+            {
+                if (!GDLELoader.TryLoadQuest(lines, out result))
+                {
+                    Console.WriteLine($"Failed to parse quest");
+                    return false;
+                }
             }
 
             // convert to sql quest
@@ -498,11 +653,23 @@ namespace ACDataLib
                 if (quest.LastModified == DateTime.MinValue)
                     quest.LastModified = DateTime.UtcNow;
 
-                var sqlFilename = fi.Name.Replace(".json", ".sql");
+                StreamWriter sqlFile = null;
+                string sqlFilename = null;
+                MemoryStream memoryStream = null;
+                
+                if (lines == null)
+                {
+                    sqlFilename = fi.Name.Replace(".json", ".sql");
 
-                var sqlFolder = outputFolder ?? fi.Directory;
+                    var sqlFolder = outputFolder ?? fi.Directory;
 
-                var sqlFile = new StreamWriter(sqlFolder.FullName + Path.DirectorySeparatorChar + sqlFilename);
+                    sqlFile = new StreamWriter(sqlFolder.FullName + Path.DirectorySeparatorChar + sqlFilename);
+                }
+                else
+                {
+                    memoryStream = new MemoryStream();
+                    sqlFile = new StreamWriter(memoryStream);
+                }
 
                 QuestSQLWriter.CreateSQLDELETEStatement(quest, sqlFile);
                 sqlFile.WriteLine();
@@ -510,6 +677,12 @@ namespace ACDataLib
                 QuestSQLWriter.CreateSQLINSERTStatement(quest, sqlFile);
 
                 sqlFile.Close();
+
+                if (lines != null)
+                {
+                    Output = memoryStream.ToString();
+                    return true;
+                }
 
                 Console.WriteLine($"Converted {fi.FullName} to {fi.DirectoryName}{Path.DirectorySeparatorChar}{sqlFilename}");
             }

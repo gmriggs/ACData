@@ -30,6 +30,21 @@ namespace ACE.Adapter.Lifestoned
             }
         }
 
+        public static bool TryLoadWeenie(string[] lines, out global::Lifestoned.DataModel.Gdle.Weenie result)
+        {
+            try
+            {
+                result = JsonConvert.DeserializeObject<global::Lifestoned.DataModel.Gdle.Weenie>(string.Join("\n", lines));
+
+                return true;
+            }
+            catch
+            {
+                result = null;
+                return false;
+            }
+        }
+
         public static bool TryLoadWeenies(string folder, out List<global::Lifestoned.DataModel.Gdle.Weenie> results)
         {
             try

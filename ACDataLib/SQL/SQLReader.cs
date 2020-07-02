@@ -30,19 +30,36 @@ namespace ACDataLib
                         line = streamReader.ReadLine();
                         continue;
                     }
-                    else if (line.Contains("`landblock_instance`"))
-                        return ContentType.Landblock;
-                    else if (line.Contains("`quest`"))
-                        return ContentType.Quest;
-                    else if (line.Contains("`recipe`"))
-                        return ContentType.Recipe;
-                    else if (line.Contains("`weenie`"))
-                        return ContentType.Weenie;
-                    else
-                        break;
+                    return ProcessLine(line);
                 }
                 return ContentType.Undefined;
             }
+        }
+
+        public static ContentType ProcessLine(string line)
+        {
+            if (line.Contains("`landblock_instance`"))
+                return ContentType.Landblock;
+            else if (line.Contains("`quest`"))
+                return ContentType.Quest;
+            else if (line.Contains("`recipe`"))
+                return ContentType.Recipe;
+            else if (line.Contains("`weenie`"))
+                return ContentType.Weenie;
+            else
+                return ContentType.Undefined;
+        }
+
+        public static ContentType GetContentType(string[] lines)
+        {
+            foreach (var line in lines)
+            {
+                if (line.Trim().Length == 0 || line.StartsWith("/*"))
+                    continue;
+                else
+                    return ProcessLine(line);
+            }
+            return ContentType.Undefined;
         }
 
         protected static List<string> GetColumns(string line)
