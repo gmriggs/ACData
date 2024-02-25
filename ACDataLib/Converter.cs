@@ -377,7 +377,7 @@ namespace ACDataLib
 
                 sqlFile.Close();
 
-                if (lines == null)
+                if (lines != null)
                 {
                     Output = memoryStream.ToString();
                     return true;
